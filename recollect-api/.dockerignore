@@ -47,10 +47,6 @@ Thumbs.db
 .git/
 .gitignore
 
-# Documentation
-README.md
-*.md
-
 # Logs
 *.log
 logs/

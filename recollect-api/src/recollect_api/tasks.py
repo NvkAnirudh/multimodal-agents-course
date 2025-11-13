@@ -46,7 +46,12 @@ def process_video_task(self, video_path: str) -> dict:
             mcp_client = Client(settings.MCP_SERVER)
             async with mcp_client:
                 result = await mcp_client.call_tool("process_video", {"video_path": video_path})
-                return result
+                # Extract text content from MCP response
+                if hasattr(result, 'content') and len(result.content) > 0:
+                    content_item = result.content[0]
+                    if hasattr(content_item, 'text'):
+                        return content_item.text
+                return str(result)
 
         result = asyncio.run(process_async())
 

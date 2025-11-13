@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://redis:6379/0"
     POSTGRES_URL: str = "postgresql://recollect:recollect_dev_password@postgres:5432/recollect"
 
+    # --- Celery Configuration ---
+    CELERY_BROKER_URL: str = "amqp://recollect:recollect_dev_password@rabbitmq:5672//"
+    CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
+
     # --- MCP Configuration ---
     MCP_SERVER: str = "http://recollect-mcp:9090/mcp"
 

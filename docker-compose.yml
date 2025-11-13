@@ -38,6 +38,64 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # RabbitMQ - Message broker for Celery
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: recollect-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-recollect}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-recollect_dev_password}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - agent-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Celery Worker - Async video processing
+  celery-worker:
+    container_name: recollect-celery-worker
+    build:
+      context: ./recollect-api
+    command: celery -A recollect_api.celery_app worker --loglevel=info --concurrency=4
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/recollect
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_USER:-recollect}:${RABBITMQ_PASSWORD:-recollect_dev_password}@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - MCP_SERVER_URL=http://recollect-mcp:9090/mcp
+    env_file:
+      - ./recollect-api/.env
+    networks:
+      - agent-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      recollect-mcp:
+        condition: service_started
+    volumes:
+      - shared_media:/app/shared_media
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    restart: unless-stopped
+
   recollect-mcp:
     container_name: recollect-mcp
     build:
@@ -79,6 +137,8 @@ services:
       - DISABLE_NEST_ASYNCIO=True
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/recollect
+      - CELERY_BROKER_URL=amqp://${RABBITMQ_USER:-recollect}:${RABBITMQ_PASSWORD:-recollect_dev_password}@rabbitmq:5672//
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - MCP_SERVER_URL=http://recollect-mcp:9090/mcp
     env_file:
       - ./recollect-api/.env
@@ -90,6 +150,8 @@ services:
       redis:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     volumes:
       - shared_media:/app/shared_media
@@ -126,3 +188,5 @@ volumes:
     name: recollect_redis_data
   postgres_data:
     name: recollect_postgres_data
+  rabbitmq_data:
+    name: recollect_rabbitmq_data

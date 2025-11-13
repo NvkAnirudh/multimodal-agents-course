@@ -1,8 +1,62 @@
-data/
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
 .venv/
-.env
-.DS_Store
-.vscode/
+venv/
+env/
+ENV/
+
+# Package management
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
 .ruff_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+
+# Data and media
+data/
 img/
+static/
 notebooks/
+shared_media/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+

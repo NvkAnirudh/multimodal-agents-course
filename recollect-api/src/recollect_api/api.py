@@ -74,6 +74,30 @@ async def root():
     return {"message": "Welcome to Recollect API. Visit /docs for documentation"}
 
 
+@app.get("/health")
+async def health_check():
+    """
+    Health check endpoint for container health monitoring
+    """
+    return {"status": "healthy", "service": "recollect-api"}
+
+
+@app.get("/ready")
+async def readiness_check(request: Request):
+    """
+    Readiness check endpoint - verifies all dependencies are available
+    """
+    try:
+        # Check if agent is initialized
+        if not hasattr(request.app.state, "agent"):
+            return {"status": "not_ready", "reason": "agent_not_initialized"}, 503
+
+        return {"status": "ready", "service": "recollect-api"}
+    except Exception as e:
+        logger.error(f"Readiness check failed: {e}")
+        return {"status": "not_ready", "reason": str(e)}, 503
+
+
 @app.get("/task-status/{task_id}")
 async def get_task_status(task_id: str, fastapi_request: Request):
     status = fastapi_request.app.state.bg_task_states.get(task_id, TaskStatus.NOT_FOUND)

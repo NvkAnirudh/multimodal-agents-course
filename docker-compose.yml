@@ -1,4 +1,43 @@
 services:
+  # Redis - Hot storage for conversations and caching
+  redis:
+    image: redis:7-alpine
+    container_name: recollect-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - agent-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # PostgreSQL - Cold storage and video metadata
+  postgres:
+    image: postgres:16-alpine
+    container_name: recollect-postgres
+    environment:
+      - POSTGRES_DB=recollect
+      - POSTGRES_USER=recollect
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-recollect_dev_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - agent-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recollect"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   recollect-mcp:
     container_name: recollect-mcp
     build:
@@ -11,20 +50,24 @@ services:
       - agent-network
     environment:
       - HF_HOME=/root/.cache/huggingface
+      - PIXELTABLE_DB_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/pixeltable
     volumes:
       - ./.vscode:/app/.vscode
       - shared_media:/app/shared_media
       - ~/.cache:/root/.cache
       - ~/.cache/huggingface:/root/.cache/huggingface
-    
+    depends_on:
+      postgres:
+        condition: service_healthy
     deploy:
       resources:
         limits:
-          cpus: '4' 
-          memory: 4G   
+          cpus: '4'
+          memory: 4G
         reservations:
-          cpus: '4'    
-          memory: 4G   
+          cpus: '4'
+          memory: 4G
+    restart: unless-stopped
 
   recollect-api:
     container_name: recollect-api
@@ -34,15 +77,30 @@ services:
       - "8080:8080"
     environment:
       - DISABLE_NEST_ASYNCIO=True
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/recollect
+      - MCP_SERVER_URL=http://recollect-mcp:9090/mcp
     env_file:
       - ./recollect-api/.env
     networks:
       - agent-network
     depends_on:
-      - recollect-mcp
+      recollect-mcp:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     volumes:
       - shared_media:/app/shared_media
       - ./.vscode:/app/.vscode
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
   recollect-ui:
     container_name: recollect-ui
     build:
@@ -64,3 +122,7 @@ networks:
 volumes:
   shared_media:
     name: shared_media
+  redis_data:
+    name: recollect_redis_data
+  postgres_data:
+    name: recollect_postgres_data

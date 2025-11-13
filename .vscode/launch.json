@@ -8,7 +8,7 @@
             "name": "[DEBUG]Run MCP",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/kubrick_mcp/server.py",
+            "program": "${workspaceFolder}/src/recollect_mcp/server.py",
             "python": "${command:python.interpreterPath}",
             "justMyCode": false,
             "args": [
@@ -23,7 +23,7 @@
             "name": "[DEBUG]Run API",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/kubrick_api/api.py",
+            "program": "${workspaceFolder}/src/recollect_api/api.py",
             "python": "/app/.venv/bin/python",
             "args": [
                 "--port", "8080",

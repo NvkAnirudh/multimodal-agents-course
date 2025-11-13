@@ -1,4 +1,4 @@
-<h1 align="center">Kubrick Course</h1>
+<h1 align="center">Recollect Course</h1>
 <p align="center">
     <img alt="logo" src="static/hal_9000.png" width=100 />
     <h4 align="center" >Hi Dave...</h4>
@@ -11,7 +11,7 @@
 <p align="center"> A <b>free, Open-source</b> course by <a href="https://theneuralmaze.substack.com"> The Neural Maze </a> and <a href="https://neuralbits.substack.com">Neural Bits</a> in collaboration with <a href="https://github.com/pixeltable">Pixeltable</a> and <a href="https://github.com/comet-ml/opik">Opik</a>
 </p>
 </br>
-<img alt="logo" src="kubrick-api/static/agent_architecture.gif" width=1000 />
+<img alt="logo" src="recollect-api/static/agent_architecture.gif" width=1000 />
 </br>
 
 ---
@@ -21,7 +21,7 @@ Tired of tutorials that just walk you through connecting an existing MCP server 
 
 Yeah, us too.
 
-That's why we built **Kubrick AI**, an MCP Multimodal Agent for video processing tasks. Yes! You read that right. 
+That's why we built **Recollect AI**, an MCP Multimodal Agent for video processing tasks. Yes! You read that right. 
 
 > 💡 Agents + Video Processing ... and MCP! 
 
@@ -65,7 +65,7 @@ Specifically, you'll get to:
 - Integrate LLMOps principles and best software engineering practices.
 - Learn about video, embeddings, streaming APIs, Vision Language Models (VLMs), and more.
 
-After completing this course, you'll have built your own Kubrick Agent with a HAL-themed spin-off, to play the role of a new set of eyes and ears:
+After completing this course, you'll have built your own Recollect Agent with a HAL-themed spin-off, to play the role of a new set of eyes and ears:
 
 <video src="https://github.com/user-attachments/assets/ef77c2a9-1a77-4f14-b2dd-e759c3f6db72"/></video>
 
@@ -73,17 +73,17 @@ After completing this course, you'll have built your own Kubrick Agent with a HA
 
 ## Getting Started
 
-Kubrick is **not** a simple tutorial. So, to get this system up and running, there are a few things you need to do first.
+Recollect is **not** a simple tutorial. So, to get this system up and running, there are a few things you need to do first.
 
 We have detailed the steps to get you started in this [GETTING_STARTED.md](GETTING_STARTED.md) file.
 
-> 💡 Having Kubrick running is just the first step! Now that you have it up and running, it's time to actually understand how it works (see [Course Syllabus](#-course-syllabus)).
+> 💡 Having Recollect running is just the first step! Now that you have it up and running, it's time to actually understand how it works (see [Course Syllabus](#-course-syllabus)).
 
 
 ---
 ## Watch the Full Video Course
 <p align="center">
-    <a href="https://www.youtube.com/watch?v=_iYB1z1_Xgs&t=316s"><img src="static/video_thumbnail.png" alt="Kubrick Multimodal Agent" width="500"></a>
+    <a href="https://www.youtube.com/watch?v=_iYB1z1_Xgs&t=316s"><img src="static/video_thumbnail.png" alt="Recollect Multimodal Agent" width="500"></a>
 </p>
 
 ---
@@ -114,18 +114,18 @@ The overall level of this course is Beginner/Intermediate, but don't worry. We'l
 ## 💰 What's the cost?
 This course and its materials are open-source and completely free, thanks to our sponsors, Pixeltable and Opik! 
 
-You'll be able to run Kubrick examples while staying at a minimum cost. That's because we'll use OpenAI and Groq for our LLM and VLM calls, which offer freemium plans as such:
+You'll be able to run Recollect examples while staying at a minimum cost. That's because we'll use OpenAI and Groq for our LLM and VLM calls, which offer freemium plans as such:
 
 | Provider | Free Credits |
 | -------- |  ----------- |
 | OpenAI   |  $5 on first sign-up |
 | Groq | 500,000 tokens/day
 
-> [!NOTE]  
-> In this setup, for running the Kubrick Agent example, the freemium plans are enough.
+> [!NOTE]
+> In this setup, for running the Recollect Agent example, the freemium plans are enough.
 
 ## 📚 Course Syllabus
-The Kubrick Agent open-source course consists of five comprehensive modules, covering concepts, system design, tooling, and hands-on implementation.
+The Recollect Agent open-source course consists of five comprehensive modules, covering concepts, system design, tooling, and hands-on implementation.
 
 To get the most out of this course, we recommend:
 
@@ -138,11 +138,11 @@ To get the most out of this course, we recommend:
 | Module No. | In-depth Lesson (Link) | Lesson Summary (3min) | Description | Code |
 | - | -------------- | ------------ | -------- | ----------- |
 | 0 | <a href="https://multimodalai.substack.com/p/introducing-kubrick-course-a-multimodal"><img src="static/kubrick_ai_diagram.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/your-first-video-agent-multimodality) | Course introduction and overview. Outlining the basic components  | N/A 
-| 1 | <a href="https://multimodalai.substack.com/p/cracking-the-code-of-multimodal-ai"><img src="kubrick-mcp/static/m2_mm_data_pipelines.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/the-future-of-video-search-is-here) | Diving into the core components of the multimodal processing pipeline, covering video, images, text, and audio data. | [kubrick-mcp](kubrick-mcp)
-| 2 | <a href="https://multimodalai.substack.com/p/building-mcp-servers-for-video-search"><img src="kubrick-mcp/static/m2_mcp_servers_for_mm.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/how-real-ai-engineers-build-mcp-servers)| Building the Kubrick MCP Server with FastMCP. Covering MCP protocol (transport, communication), capabilities, tools, resources, and prompts. Adding Opik Integration and MCP Inspector for efficient debugging and local testing. | [kubrick-mcp](kubrick-mcp)
-| 3 | <a href="https://multimodalai.substack.com/p/building-tool-use-mcp-agents-from"><img src="kubrick-api/static/m3_tooluse_agents.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/how-we-built-an-mcp-agent-from-scratch) | Building the Kubrick MCP Agent from scratch. Memory layer implementation with Pixeltable and MCP Client with FastMCP. Understanding how to translate MCP Tools into specific provider tools (Groq) | [kubrick-api](kubrick-api)
-| 4 | <a href="https://multimodalai.substack.com/p/building-a-fullstack-befe-agent-ui"><img src="kubrick-api/static/m4_building_agent_api.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/if-you-cant-trace-it-monitor-it-or) | Building the Groq Agent, covering the React UI - FastAPI API communication and adding LLMOps observability and conversation tracing with Opik (by Comet) | [kubrick-api](kubrick-api)
-| 5 | <a href="https://multimodalai.substack.com/p/kubrick-course-final-round-up"><img src="kubrick-api/static/agent_architecture.gif" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/the-ai-engineering-course-i-wish) | Complete Round-up of the free, open-source Kubrick Course. | N/A
+| 1 | <a href="https://multimodalai.substack.com/p/cracking-the-code-of-multimodal-ai"><img src="recollect-mcp/static/m2_mm_data_pipelines.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/the-future-of-video-search-is-here) | Diving into the core components of the multimodal processing pipeline, covering video, images, text, and audio data. | [recollect-mcp](recollect-mcp)
+| 2 | <a href="https://multimodalai.substack.com/p/building-mcp-servers-for-video-search"><img src="recollect-mcp/static/m2_mcp_servers_for_mm.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/how-real-ai-engineers-build-mcp-servers)| Building the Recollect MCP Server with FastMCP. Covering MCP protocol (transport, communication), capabilities, tools, resources, and prompts. Adding Opik Integration and MCP Inspector for efficient debugging and local testing. | [recollect-mcp](recollect-mcp)
+| 3 | <a href="https://multimodalai.substack.com/p/building-tool-use-mcp-agents-from"><img src="recollect-api/static/m3_tooluse_agents.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/how-we-built-an-mcp-agent-from-scratch) | Building the Recollect MCP Agent from scratch. Memory layer implementation with Pixeltable and MCP Client with FastMCP. Understanding how to translate MCP Tools into specific provider tools (Groq) | [recollect-api](recollect-api)
+| 4 | <a href="https://multimodalai.substack.com/p/building-a-fullstack-befe-agent-ui"><img src="recollect-api/static/m4_building_agent_api.png" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/if-you-cant-trace-it-monitor-it-or) | Building the Groq Agent, covering the React UI - FastAPI API communication and adding LLMOps observability and conversation tracing with Opik (by Comet) | [recollect-api](recollect-api)
+| 5 | <a href="https://multimodalai.substack.com/p/kubrick-course-final-round-up"><img src="recollect-api/static/agent_architecture.gif" width=300></a> | [Get a Summary](https://theneuralmaze.substack.com/p/the-ai-engineering-course-i-wish) | Complete Round-up of the free, open-source Recollect Course. | N/A
 
 
 ## Sponsors

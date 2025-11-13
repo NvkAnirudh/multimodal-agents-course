@@ -1,12 +1,12 @@
 services:
-  kubrick-mcp:
-    container_name: kubrick-mcp
+  recollect-mcp:
+    container_name: recollect-mcp
     build:
-      context: ./kubrick-mcp
+      context: ./recollect-mcp
     ports:
       - "9090:9090"
     env_file:
-      - ./kubrick-mcp/.env
+      - ./recollect-mcp/.env
     networks:
       - agent-network
     environment:
@@ -26,33 +26,32 @@ services:
           cpus: '4'    
           memory: 4G   
 
-  kubrick-api:
-    container_name: kubrick-api
+  recollect-api:
+    container_name: recollect-api
     build:
-      context: ./kubrick-api
+      context: ./recollect-api
     ports:
       - "8080:8080"
     environment:
       - DISABLE_NEST_ASYNCIO=True
     env_file:
-      - ./kubrick-api/.env
+      - ./recollect-api/.env
     networks:
       - agent-network
     depends_on:
-      - kubrick-mcp
+      - recollect-mcp
     volumes:
       - shared_media:/app/shared_media
       - ./.vscode:/app/.vscode
-  kubrick-ui:
-    container_name: kubrick-ui
+  recollect-ui:
+    container_name: recollect-ui
     build:
-      context: ./kubrick-ui
-      dockerfile: Dockerfile
+      context: ./recollect-ui
     ports:
       - "3000:3000"
     depends_on:
-      - kubrick-api
-      - kubrick-mcp
+      - recollect-api
+      - recollect-mcp
     networks:
       - agent-network
     volumes:

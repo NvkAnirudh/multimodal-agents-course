@@ -1,10 +1,10 @@
-Kubrick is split into three main components:
+Recollect is split into three main components:
 
-1. MCP Server — located in the [kubrick-mcp](kubrick-mcp) directory
-2. MCP Agent + Agent API — lives in [kubrick-api](kubrick-api) directory
-3. UI — you’ll find it in [kubrick-ui](kubrick-ui) directory
+1. MCP Server — located in the [recollect-mcp](recollect-mcp) directory
+2. MCP Agent + Agent API — lives in [recollect-api](recollect-api) directory
+3. UI — you'll find it in [recollect-ui](recollect-ui) directory
 
-Each of these is its own project, and together they make up the full Kubrick system.
+Each of these is its own project, and together they make up the full Recollect system.
 
 ---
 
@@ -28,22 +28,22 @@ To install uv, simply follow this [instructions](https://docs.astral.sh/uv/getti
 
 The MCP Server is where the magic happens. It stores tools, prompts, and everything the Agent needs to work.
 
-To set it up, head to the [kubrick-mcp](kubrick-mcp) folder and follow the steps in the README.md.
+To set it up, head to the [recollect-mcp](recollect-mcp) folder and follow the steps in the README.md.
 
 # 4. Set Up the MCP Agent / Agent API
 
 Next, set up the Agent and its API. This is the part that talks to the UI via FastAPI.
 
-Head to the [kubrick-api](kubrick-api) directory and follow the steps in the README.md.
+Head to the [recollect-api](recollect-api) directory and follow the steps in the README.md.
 
-# 5. Start Kubrick
+# 5. Start Recollect
 
-Once the MCP Server and Agent API are configured, you’re ready to launch the whole system.
+Once the MCP Server and Agent API are configured, you're ready to launch the whole system.
 
 From the root of the repo, just run:
 
 ```
-make start-kubrick
+make start-recollect
 ```
 
 This kicks off a Docker Compose application with three services:
@@ -52,6 +52,6 @@ This kicks off a Docker Compose application with three services:
 2. Agent API at http://localhost:8080/
 3. UI at http://localhost:3000/
 
-Open your browser and go to http://localhost:3000/ to start using Kubrick!
+Open your browser and go to http://localhost:3000/ to start using Recollect!
 
-![Kubrick UI](./static/kubrick_landing_chat.png)
+![Recollect UI](./static/kubrick_landing_chat.png)

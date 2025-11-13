@@ -4,11 +4,11 @@ endif
 
 include .env	
 	
-build-kubrick:
+build-recollect:
 	docker compose build
 
-start-kubrick:
+start-recollect:
 	docker compose up --build -d
 
-stop-kubrick:
+stop-recollect:
 	docker compose stop

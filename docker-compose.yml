@@ -64,7 +64,7 @@ services:
     container_name: recollect-celery-worker
     build:
       context: ./recollect-api
-    command: celery -A recollect_api.celery_app worker --loglevel=info --concurrency=4
+    command: uv run celery -A recollect_api.celery_app worker --loglevel=info --concurrency=4
     environment:
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/recollect

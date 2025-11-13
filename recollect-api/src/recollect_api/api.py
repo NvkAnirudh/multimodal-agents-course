@@ -5,14 +5,15 @@ from pathlib import Path
 from uuid import uuid4
 
 import click
-from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Request, UploadFile
+from celery.result import AsyncResult
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastmcp.client import Client
 from loguru import logger
 
 from recollect_api.agent import GroqAgent
+from recollect_api.celery_app import celery_app
 from recollect_api.config import get_settings
 from recollect_api.models import (
     AssistantMessageResponse,
@@ -22,6 +23,7 @@ from recollect_api.models import (
     UserMessageRequest,
     VideoUploadResponse,
 )
+from recollect_api.tasks import process_video_task
 
 settings = get_settings()
 
@@ -41,7 +43,6 @@ async def lifespan(app: FastAPI):
         mcp_server=settings.MCP_SERVER,
         disable_tools=["process_video"],
     )
-    app.state.bg_task_states = dict()
     yield
     app.state.agent.reset_memory()
 
@@ -99,41 +100,59 @@ async def readiness_check(request: Request):
 
 
 @app.get("/task-status/{task_id}")
-async def get_task_status(task_id: str, fastapi_request: Request):
-    status = fastapi_request.app.state.bg_task_states.get(task_id, TaskStatus.NOT_FOUND)
-    return {"task_id": task_id, "status": status}
+async def get_task_status(task_id: str):
+    """
+    Get the status of a Celery task
+    """
+    try:
+        task_result = AsyncResult(task_id, app=celery_app)
+
+        if task_result.state == "PENDING":
+            status = TaskStatus.PENDING
+        elif task_result.state == "PROCESSING":
+            status = TaskStatus.IN_PROGRESS
+        elif task_result.state == "SUCCESS":
+            status = TaskStatus.COMPLETED
+        elif task_result.state == "FAILURE":
+            status = TaskStatus.FAILED
+        else:
+            status = task_result.state
+
+        response = {
+            "task_id": task_id,
+            "status": status,
+            "state": task_result.state,
+        }
+
+        if task_result.info:
+            response["info"] = task_result.info
+
+        return response
+    except Exception as e:
+        logger.error(f"Error getting task status: {e}")
+        return {"task_id": task_id, "status": TaskStatus.NOT_FOUND}
 
 
 @app.post("/process-video")
-async def process_video(request: ProcessVideoRequest, bg_tasks: BackgroundTasks, fastapi_request: Request):
+async def process_video(request: ProcessVideoRequest):
     """
-    Process a video and return the results
+    Process a video using Celery task queue
     """
-    task_id = str(uuid4())
-    bg_task_states = fastapi_request.app.state.bg_task_states
+    if not Path(request.video_path).exists():
+        raise HTTPException(status_code=404, detail="Video file not found")
 
-    async def background_process_video(video_path: str, task_id: str):
-        """
-        Background task to process the video
-        """
-        bg_task_states[task_id] = TaskStatus.IN_PROGRESS
+    try:
+        # Dispatch Celery task
+        task = process_video_task.delay(request.video_path)
+        logger.info(f"Dispatched video processing task: {task.id} for {request.video_path}")
 
-        if not Path(video_path).exists():
-            bg_task_states[task_id] = TaskStatus.FAILED
-            raise HTTPException(status_code=404, detail="Video file not found")
-
-        try:
-            mcp_client = Client(settings.MCP_SERVER)
-            async with mcp_client:
-                _ = await mcp_client.call_tool("process_video", {"video_path": request.video_path})
-        except Exception as e:
-            logger.error(f"Error processing video {video_path}: {e}")
-            bg_task_states[task_id] = TaskStatus.FAILED
-            raise HTTPException(status_code=500, detail=str(e))
-        bg_task_states[task_id] = TaskStatus.COMPLETED
-
-    bg_tasks.add_task(background_process_video, request.video_path, task_id)
-    return ProcessVideoResponse(message="Task enqueued for processing", task_id=task_id)
+        return ProcessVideoResponse(
+            message="Video processing task enqueued",
+            task_id=task.id
+        )
+    except Exception as e:
+        logger.error(f"Error dispatching video processing task: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/chat", response_model=AssistantMessageResponse)

@@ -1,8 +1,15 @@
 import click
 from fastmcp import FastMCP
+import os
+from recollect_mcp.config import get_settings
+
+# Set Pixeltable database URL via environment variable before importing pixeltable
+settings = get_settings()
+if settings.PIXELTABLE_DB_URL:
+    os.environ['PIXELTABLE_DB'] = settings.PIXELTABLE_DB_URL
+
 import pixeltable as pxt
 
-from recollect_mcp.config import get_settings
 from recollect_mcp.prompts import general_system_prompt, routing_system_prompt, tool_use_system_prompt
 from recollect_mcp.resources import list_tables
 from recollect_mcp.tools import (
@@ -11,11 +18,6 @@ from recollect_mcp.tools import (
     get_video_clip_from_user_query,
     process_video,
 )
-
-# Initialize Pixeltable with PostgreSQL backend
-settings = get_settings()
-if settings.PIXELTABLE_DB_URL:
-    pxt.set_db_url(settings.PIXELTABLE_DB_URL)
 
 
 def add_mcp_tools(mcp: FastMCP):

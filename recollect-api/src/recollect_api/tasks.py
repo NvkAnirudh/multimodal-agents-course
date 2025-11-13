@@ -1,4 +1,5 @@
 """Celery tasks for async processing"""
+import asyncio
 from pathlib import Path
 from loguru import logger
 from fastmcp.client import Client
@@ -40,9 +41,14 @@ def process_video_task(self, video_path: str) -> dict:
             }
         )
 
-        # Process video using MCP server
-        mcp_client = Client(settings.MCP_SERVER)
-        result = mcp_client.call_tool_sync("process_video", {"video_path": video_path})
+        # Process video using MCP server (run async in sync context)
+        async def process_async():
+            mcp_client = Client(settings.MCP_SERVER)
+            async with mcp_client:
+                result = await mcp_client.call_tool("process_video", {"video_path": video_path})
+                return result
+
+        result = asyncio.run(process_async())
 
         logger.info(f"Video processing completed for: {video_path}")
         return {

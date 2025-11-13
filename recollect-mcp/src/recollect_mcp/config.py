@@ -6,6 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file="recollect-mcp/.env", extra="ignore", env_file_encoding="utf-8")
 
+    # --- Pixeltable Configuration ---
+    PIXELTABLE_DB_URL: str | None = None
+
     # --- OPIK Configuration ---
     OPIK_API_KEY: str
     OPIK_WORKSPACE: str = "default"

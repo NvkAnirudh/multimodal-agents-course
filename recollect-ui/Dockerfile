@@ -3,9 +3,8 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-COPY bun.lockb ./
 
-RUN npm i
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 

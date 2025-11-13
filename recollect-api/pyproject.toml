@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "asyncpg>=0.30.0",
     "click>=8.2.1",
     "fastapi[standard]>=0.115.13",
     "fastmcp>=2.9.0",
@@ -16,6 +17,7 @@ dependencies = [
     "opik>=1.7.36",
     "pixeltable>=0.4.1",
     "pydantic-settings>=2.10.0",
+    "redis>=5.2.0",
     "ruff>=0.12.0",
 ]
 

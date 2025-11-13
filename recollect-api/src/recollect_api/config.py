@@ -23,6 +23,8 @@ class Settings(BaseSettings):
 
     # --- Memory Configuration ---
     AGENT_MEMORY_SIZE: int = 20
+    REDIS_URL: str = "redis://redis:6379/0"
+    POSTGRES_URL: str = "postgresql://recollect:recollect_dev_password@postgres:5432/recollect"
 
     # --- MCP Configuration ---
     MCP_SERVER: str = "http://recollect-mcp:9090/mcp"

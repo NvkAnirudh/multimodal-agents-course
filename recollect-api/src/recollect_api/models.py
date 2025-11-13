@@ -31,6 +31,15 @@ class VideoUploadResponse(BaseModel):
     task_id: str | None = None
 
 
+class DownloadVideoRequest(BaseModel):
+    url: str
+
+
+class DownloadVideoResponse(BaseModel):
+    message: str
+    task_id: str
+
+
 # -- LLM Structured Outputs Models --
 
 

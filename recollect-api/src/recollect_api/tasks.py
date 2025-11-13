@@ -4,6 +4,7 @@ from loguru import logger
 from fastmcp.client import Client
 from recollect_api.celery_app import celery_app
 from recollect_api.config import get_settings
+from recollect_api.services import VideoDownloader
 
 settings = get_settings()
 
@@ -60,18 +61,17 @@ def process_video_task(self, video_path: str) -> dict:
 
 
 @celery_app.task(bind=True, name="recollect.download_video")
-def download_video_task(self, url: str, source: str) -> dict:
+def download_video_task(self, url: str) -> dict:
     """
     Download a video from Instagram or YouTube
 
     Args:
         url: Video URL
-        source: Video source ('instagram' or 'youtube')
 
     Returns:
         dict: Download result with status and file path
     """
-    logger.info(f"Starting video download task for: {url} (source: {source})")
+    logger.info(f"Starting video download task for: {url}")
 
     try:
         # Update task state
@@ -79,21 +79,20 @@ def download_video_task(self, url: str, source: str) -> dict:
             state="DOWNLOADING",
             meta={
                 "url": url,
-                "source": source,
                 "status": "downloading",
             }
         )
 
-        # TODO: Implement video download logic
-        # This will be implemented in the next task
+        # Download video using VideoDownloader service
+        downloader = VideoDownloader()
+        result = downloader.download(url)
+
+        if result["status"] == "failed":
+            logger.error(f"Video download failed for {url}: {result.get('error')}")
+            return result
 
         logger.info(f"Video download completed for: {url}")
-        return {
-            "status": "completed",
-            "url": url,
-            "source": source,
-            "file_path": "placeholder",
-        }
+        return result
 
     except Exception as e:
         logger.error(f"Error downloading video {url}: {e}")
@@ -101,5 +100,4 @@ def download_video_task(self, url: str, source: str) -> dict:
             "status": "failed",
             "error": str(e),
             "url": url,
-            "source": source,
         }

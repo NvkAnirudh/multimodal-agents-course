@@ -17,13 +17,15 @@ from recollect_api.celery_app import celery_app
 from recollect_api.config import get_settings
 from recollect_api.models import (
     AssistantMessageResponse,
+    DownloadVideoRequest,
+    DownloadVideoResponse,
     ProcessVideoRequest,
     ProcessVideoResponse,
     ResetMemoryResponse,
     UserMessageRequest,
     VideoUploadResponse,
 )
-from recollect_api.tasks import process_video_task
+from recollect_api.tasks import download_video_task, process_video_task
 
 settings = get_settings()
 
@@ -206,6 +208,25 @@ async def upload_video(file: UploadFile = File(...)):
         return VideoUploadResponse(message="Video uploaded successfully", video_path=str(video_path))
     except Exception as e:
         logger.error(f"Error uploading video: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/download-video", response_model=DownloadVideoResponse)
+async def download_video(request: DownloadVideoRequest):
+    """
+    Download a video from Instagram or YouTube URL using Celery task queue
+    """
+    try:
+        # Dispatch Celery task
+        task = download_video_task.delay(request.url)
+        logger.info(f"Dispatched video download task: {task.id} for {request.url}")
+
+        return DownloadVideoResponse(
+            message="Video download task enqueued",
+            task_id=task.id
+        )
+    except Exception as e:
+        logger.error(f"Error dispatching video download task: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

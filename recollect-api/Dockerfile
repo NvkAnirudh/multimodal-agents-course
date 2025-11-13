@@ -17,7 +17,7 @@ RUN uv pip install -e .
 RUN uv pip install gunicorn
 
 # Use Gunicorn with 4 workers for better concurrency
-CMD ["gunicorn", "recollect_api.api:app", \
+CMD ["uv", "run", "gunicorn", "recollect_api.api:app", \
      "--workers", "4", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
      "--bind", "0.0.0.0:8080", \

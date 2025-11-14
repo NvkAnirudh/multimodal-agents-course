@@ -1,4 +1,4 @@
-"""Video downloader service for Instagram and YouTube"""
+"""Content downloader service for Instagram, YouTube, LinkedIn, and TikTok"""
 import re
 from pathlib import Path
 from typing import Dict, Literal
@@ -9,7 +9,17 @@ from loguru import logger
 
 
 class VideoDownloader:
-    """Download videos from Instagram and YouTube"""
+    """
+    Download content from social media platforms
+
+    Supports:
+    - Instagram: Reels and regular posts (video)
+    - YouTube: Videos and Shorts (video)
+    - TikTok: Video posts (video)
+    - LinkedIn: Video posts, image posts, carousels, and text posts
+
+    For LinkedIn non-video posts, returns metadata without downloading files.
+    """
 
     def __init__(self, download_dir: str = "shared_media"):
         self.download_dir = Path(download_dir)
@@ -91,10 +101,14 @@ class VideoDownloader:
 
     def download(self, url: str) -> Dict:
         """
-        Download video from URL
+        Download content from URL
+
+        For video platforms (Instagram, YouTube, TikTok): Downloads video
+        For LinkedIn: Attempts video download, falls back to metadata extraction
+                     for image/text-only posts
 
         Args:
-            url: Video URL to download
+            url: Content URL to download
 
         Returns:
             Dict containing download result with file path, metadata, and status
@@ -104,7 +118,7 @@ class VideoDownloader:
             raise ValueError(f"Unsupported URL: {url}")
 
         video_id = self.extract_video_id(url, source)
-        logger.info(f"Downloading {source} video: {video_id} from {url}")
+        logger.info(f"Downloading {source} content: {video_id} from {url}")
 
         # Configure yt-dlp options
         ydl_opts = {
@@ -152,6 +166,7 @@ class VideoDownloader:
 
                 return {
                     "status": "success",
+                    "content_type": "video",
                     "file_path": file_path,
                     "video_id": video_id,
                     "source": source,
@@ -172,10 +187,39 @@ class VideoDownloader:
                 }
 
         except Exception as e:
-            logger.error(f"Error downloading video from {url}: {e}")
+            error_msg = str(e)
+            logger.error(f"Error downloading content from {url}: {error_msg}")
+
+            # For LinkedIn, if video extraction fails, it might be a non-video post
+            # Try to extract basic metadata instead of failing completely
+            if source == "linkedin" and ("KeyError" in error_msg or "extractor error" in error_msg.lower()):
+                logger.info(f"LinkedIn post appears to be non-video content, extracting metadata only")
+
+                try:
+                    with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
+                        info = ydl.extract_info(url, download=False)
+
+                        return {
+                            "status": "success",
+                            "content_type": "non-video",  # Could be text, image, or carousel
+                            "file_path": None,
+                            "video_id": video_id,
+                            "source": source,
+                            "thumbnail_url": info.get("thumbnail") if info else None,
+                            "metadata": {
+                                "title": info.get("title") if info else None,
+                                "author": info.get("uploader") if info else None,
+                                "description": info.get("description") if info else None,
+                                "webpage_url": url,
+                                "note": "LinkedIn post without video content - may contain images, text, or carousel"
+                            },
+                        }
+                except:
+                    pass  # If metadata extraction also fails, fall through to error response
+
             return {
                 "status": "failed",
-                "error": str(e),
+                "error": error_msg,
                 "url": url,
                 "source": source,
             }

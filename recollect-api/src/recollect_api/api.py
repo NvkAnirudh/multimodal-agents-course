@@ -214,7 +214,15 @@ async def upload_video(file: UploadFile = File(...)):
 @app.post("/download-video", response_model=DownloadVideoResponse)
 async def download_video(request: DownloadVideoRequest):
     """
-    Download a video from Instagram or YouTube URL using Celery task queue
+    Download content from Instagram, YouTube, LinkedIn, or TikTok URL using Celery task queue
+
+    Supported platforms:
+    - Instagram: Reels and regular posts
+    - YouTube: Videos and Shorts
+    - LinkedIn: Video posts, image posts, and carousels
+    - TikTok: Video posts
+
+    Returns a task_id for tracking the download progress.
     """
     try:
         # Dispatch Celery task

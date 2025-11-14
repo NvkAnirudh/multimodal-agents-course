@@ -60,20 +60,25 @@ to make the conversation more engaging and interesting.
 
 def routing_system_prompt() -> str:
     _prompt_id = "routing-system-prompt"
-    try:
-        prompt = client.get_prompt(_prompt_id)
-        if prompt is None:
-            prompt = client.create_prompt(
-                name=_prompt_id,
-                prompt=ROUTING_SYSTEM_PROMPT,
-            )
-            logger.info(f"System prompt created. \n {prompt.commit=} \n {prompt.prompt=}")
-        return prompt.prompt
-    except Exception:
-        logger.warning("Couldn't retrieve prompt from Opik, check credentials! Using hardcoded prompt.")
-        logger.warning(f"Using hardcoded prompt: {ROUTING_SYSTEM_PROMPT}")
-        prompt = ROUTING_SYSTEM_PROMPT
-    return prompt
+    # Force use of hardcoded prompt (bypassing Opik cache)
+    logger.info("Using updated hardcoded routing prompt")
+    return ROUTING_SYSTEM_PROMPT
+
+    # Commented out Opik integration to force use of updated prompt
+    # try:
+    #     prompt = client.get_prompt(_prompt_id)
+    #     if prompt is None:
+    #         prompt = client.create_prompt(
+    #             name=_prompt_id,
+    #             prompt=ROUTING_SYSTEM_PROMPT,
+    #         )
+    #         logger.info(f"System prompt created. \n {prompt.commit=} \n {prompt.prompt=}")
+    #     return prompt.prompt
+    # except Exception:
+    #     logger.warning("Couldn't retrieve prompt from Opik, check credentials! Using hardcoded prompt.")
+    #     logger.warning(f"Using hardcoded prompt: {ROUTING_SYSTEM_PROMPT}")
+    #     prompt = ROUTING_SYSTEM_PROMPT
+    # return prompt
 
 
 def tool_use_system_prompt() -> str:

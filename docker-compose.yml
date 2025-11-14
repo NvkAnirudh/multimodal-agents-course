@@ -114,6 +114,7 @@ services:
       - shared_media:/app/shared_media
       - ~/.cache:/root/.cache
       - ~/.cache/huggingface:/root/.cache/huggingface
+      - pixeltable_records:/app/.records
     depends_on:
       postgres:
         condition: service_healthy
@@ -190,3 +191,5 @@ volumes:
     name: recollect_postgres_data
   rabbitmq_data:
     name: recollect_rabbitmq_data
+  pixeltable_records:
+    name: recollect_pixeltable_records

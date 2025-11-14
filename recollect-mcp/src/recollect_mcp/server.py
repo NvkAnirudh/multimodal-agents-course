@@ -10,7 +10,7 @@ if settings.PIXELTABLE_DB_URL:
 
 import pixeltable as pxt
 
-from recollect_mcp.prompts import general_system_prompt, routing_system_prompt, tool_use_system_prompt
+from recollect_mcp.prompts import general_system_prompt, routing_system_prompt, tool_use_system_prompt, tool_response_system_prompt
 from recollect_mcp.resources import list_tables
 from recollect_mcp.tools import (
     ask_question_about_video,
@@ -80,6 +80,13 @@ def add_mcp_prompts(mcp: FastMCP):
         name="general_system_prompt",
         description="Latest version of the general prompt from Opik.",
         tags={"prompt", "general"},
+    )
+
+    mcp.add_prompt(
+        fn=tool_response_system_prompt,
+        name="tool_response_system_prompt",
+        description="Prompt for synthesizing tool responses into answers.",
+        tags={"prompt", "tool_response"},
     )
 
 

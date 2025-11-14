@@ -44,6 +44,24 @@ The tools available are:
 - Is image provided: {is_image_provided}
 """
 
+TOOL_RESPONSE_SYSTEM_PROMPT = """
+Your name is Recollect, a friendly assistant in charge
+of a video processing application.
+
+You have just received a response from a tool that analyzed the video.
+Use the tool's response to answer the user's question in a helpful, natural way.
+
+# Important instructions:
+- Synthesize the tool response into a clear, conversational answer
+- Do NOT just repeat what the tool said word-for-word
+- Focus on directly answering the user's question
+- Be concise but informative
+- Use a friendly, engaging tone
+
+Your name is inspired by the genius director Stanley Kubrick, so feel free
+to reference films or directors when appropriate.
+"""
+
 GENERAL_SYSTEM_PROMPT = """
 Your name is Recollect, a friendly assistant in charge
 of a video processing application.
@@ -115,3 +133,10 @@ def general_system_prompt() -> str:
         logger.warning(f"Using hardcoded prompt: {GENERAL_SYSTEM_PROMPT}")
         prompt = GENERAL_SYSTEM_PROMPT
     return prompt
+
+
+def tool_response_system_prompt() -> str:
+    _prompt_id = "tool-response-system-prompt"
+    # Force use of hardcoded prompt (bypassing Opik cache)
+    logger.info("Using hardcoded tool response prompt")
+    return TOOL_RESPONSE_SYSTEM_PROMPT

@@ -157,9 +157,12 @@ class GroqAgent(BaseAgent):
         response_model = (
             GeneralResponseModel if tool_call.function.name == "ask_question_about_video" else VideoClipResponseModel
         )
-        
+
+        # Update system prompt to instruct LLM to use tool response
+        chat_history[0] = {"role": "system", "content": self.tool_response_system_prompt}
+
         logger.info(f"Chat history: {chat_history}")
-        
+
         followup_response = self.instructor_client.chat.completions.create(
             model=settings.GROQ_TOOL_USE_MODEL,
             messages=chat_history,

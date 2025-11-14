@@ -1,12 +1,5 @@
 import click
 from fastmcp import FastMCP
-import os
-from recollect_mcp.config import get_settings
-
-# Set Pixeltable database URL via environment variable before importing pixeltable
-settings = get_settings()
-if settings.PIXELTABLE_DB_URL:
-    os.environ['PIXELTABLE_DB'] = settings.PIXELTABLE_DB_URL
 
 import pixeltable as pxt
 

@@ -108,13 +108,13 @@ services:
       - agent-network
     environment:
       - HF_HOME=/root/.cache/huggingface
-      - PIXELTABLE_DB_URL=postgresql://recollect:${POSTGRES_PASSWORD:-recollect_dev_password}@postgres:5432/pixeltable
     volumes:
       - ./.vscode:/app/.vscode
       - shared_media:/app/shared_media
       - ~/.cache:/root/.cache
       - ~/.cache/huggingface:/root/.cache/huggingface
       - pixeltable_records:/app/.records
+      - pixeltable_data:/root/.pixeltable
     depends_on:
       postgres:
         condition: service_healthy
@@ -193,3 +193,5 @@ volumes:
     name: recollect_rabbitmq_data
   pixeltable_records:
     name: recollect_pixeltable_records
+  pixeltable_data:
+    name: recollect_pixeltable_data
